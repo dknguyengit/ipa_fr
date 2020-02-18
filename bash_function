@@ -1,0 +1,9 @@
+function frc {
+    local var=$(xclip -out -selection clipboard)
+    python ~/projects/ipa_fr/transcribe_fr.py "$var"
+}
+
+
+function fr {
+    python ~/projects/ipa_fr/transcribe_fr.py "$*"
+}
