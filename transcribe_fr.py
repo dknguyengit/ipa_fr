@@ -1,9 +1,10 @@
-import sys, re, time
+import sys, re, time, pyperclip
 from espeakng import ESpeakNG
 esng = ESpeakNG()
 esng.voice = 'fr'
 
 
+# Handles text formatting options
 class color:
    PURPLE = '\033[95m'
    CYAN = '\033[96m'
@@ -34,7 +35,7 @@ def print_transcription(text):
     Split input text to smaller chunks of text by punctuations
     Transcribe each chunk of text and print final output (punctuations included)
     '''
-    punctuations = ',.!?'
+    punctuations = ',.:;!?«»\/\n'
     split_text = re.split(f'([{punctuations}])', text)
 
     output = ''
@@ -42,8 +43,16 @@ def print_transcription(text):
         if chars not in punctuations:
             chars = transcribe(chars)
             output += chars
+        elif chars == '\n':
+            output += chars
+        elif chars in ':;!?«»\/':
+            output += (' ' + chars + ' ')
         else:
             output += (chars + ' ')
+    output = f'[{output.strip(". ")}]'
+    # Copy transcribed IPA to clipboard
+    pyperclip.copy(output)
+    # Print transcribed IPA to terminal
     print(output)
 
 
@@ -55,4 +64,7 @@ print_transcription(text)
 # Pause for 1 second
 time.sleep(1)
 # Read text aloud
-esng.say(text)  
+try:
+    esng.say(text, sync=True)  
+except KeyboardInterrupt:
+    pass
